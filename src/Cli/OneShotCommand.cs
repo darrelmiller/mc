@@ -45,10 +45,16 @@ public class OneShotCommand
             if (useStreaming)
             {
                 // Send message and get streaming response
-                var response = await _copilotClient.SendMessageAsync(conversation.Id.ToString()!, query);
+                var stream = await _copilotClient.SendStreamingMessageAsync(conversation.Id.ToString()!, query);
+
+                if (stream == null)
+                {
+                    ErrorHandler.WriteError("Failed to get streaming response", ErrorHandler.ConversationError);
+                    return ErrorHandler.ConversationError;
+                }
 
                 // Parse and display SSE stream
-                await foreach (var sseEvent in StreamParser.ParseSseStreamAsync(response))
+                await foreach (var sseEvent in StreamParser.ParseSseStreamAsync(stream))
                 {
                     if (!string.IsNullOrEmpty(sseEvent.Data))
                     {
@@ -63,7 +69,7 @@ public class OneShotCommand
             else
             {
                 // Send message and get non-streaming response
-                var updatedConversation = await _copilotClient.SendMessageNonStreamingAsync(conversation.Id.ToString()!, query);
+                var updatedConversation = await _copilotClient.SendMessageAsync(conversation.Id.ToString()!, query);
                 
                 // Get the latest message from the conversation
                 if (updatedConversation?.Messages != null && updatedConversation.Messages.Count > 0)

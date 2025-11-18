@@ -17,12 +17,10 @@ public class CopilotClient : ICopilotClient
 {
     private readonly CopilotApi _client;
     private readonly IAuthProvider _authProvider;
-    private readonly HttpClient _httpClient;
 
     public CopilotClient(IAuthProvider authProvider)
     {
         _authProvider = authProvider;
-        _httpClient = new HttpClient();
         
         // Create authentication provider for Kiota
         var authenticationProvider = new BaseBearerTokenAuthenticationProvider(new TokenProvider(authProvider));
@@ -68,7 +66,7 @@ public class CopilotClient : ICopilotClient
     /// <summary>
     /// Sends a message to an existing conversation and receives a non-streaming response.
     /// </summary>
-    public async Task<CopilotConversation?> SendMessageNonStreamingAsync(string conversationId, string message, string? timeZone = null)
+    public async Task<CopilotConversation?> SendMessageAsync(string conversationId, string message, string? timeZone = null)
     {
         var chatRequest = new ChatRequest
         {
@@ -108,7 +106,7 @@ public class CopilotClient : ICopilotClient
     /// <summary>
     /// Sends a message to an existing conversation and receives a streaming response.
     /// </summary>
-    public async Task<HttpResponseMessage> SendMessageAsync(string conversationId, string message, string? timeZone = null)
+    public async Task<Stream?> SendStreamingMessageAsync(string conversationId, string message, string? timeZone = null)
     {
         var chatRequest = new ChatRequest
         {
@@ -122,40 +120,27 @@ public class CopilotClient : ICopilotClient
             }
         };
 
-        // Construct the request manually to enable streaming
-        var token = await _authProvider.GetTokenAsync();
-        var requestUri = $"https://graph.microsoft.com/beta/copilot/conversations/{conversationId}/chatOverStream";
-
-        var request = new HttpRequestMessage(HttpMethod.Post, requestUri);
-        request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-        var body = await chatRequest.SerializeAsStringAsync("application/json");
-        request.Content = new StreamContent(chatRequest.SerializeAsJsonStream());
-
-        var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
-        
-        if (!response.IsSuccessStatusCode)
+        try
         {
-            var errorBody = await response.Content.ReadAsStringAsync();
-            var statusCode = response.StatusCode;
-            
-            if (statusCode == System.Net.HttpStatusCode.Unauthorized)
-            {
-                throw new InvalidOperationException($"Authentication failed: Token is invalid or expired. Response: {errorBody}");
-            }
-            else if (statusCode == System.Net.HttpStatusCode.Forbidden)
-            {
-                throw new InvalidOperationException(
-                    $"Forbidden: Insufficient permissions. Required permissions: " +
-                    $"Sites.Read.All, Mail.Read, People.Read.All, OnlineMeetingTranscript.Read.All, " +
-                    $"Chat.Read, ChannelMessage.Read.All, ExternalItem.Read.All. Response: {errorBody}");
-            }
-            else
-            {
-                throw new InvalidOperationException($"Request failed with status {statusCode}: {errorBody}");
-            }
+            var conversationGuid = Guid.Parse(conversationId);
+            var stream = await _client.Copilot.Conversations[conversationGuid].ChatOverStream.PostAsync(chatRequest);
+            return stream;
         }
-
-        return response;
+        catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            throw new InvalidOperationException("Authentication failed: Token is invalid or expired", ex);
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Forbidden)
+        {
+            throw new InvalidOperationException(
+                "Forbidden: Insufficient permissions. Required permissions: " +
+                "Sites.Read.All, Mail.Read, People.Read.All, OnlineMeetingTranscript.Read.All, " +
+                "Chat.Read, ChannelMessage.Read.All, ExternalItem.Read.All", ex);
+        }
+        catch (ApiSdk.Models.ChatOverStream500Error ex)
+        {
+            throw new InvalidOperationException($"Server error: {ex.Error?.Message ?? "An internal server error occurred"}", ex);
+        }
     }
 
     /// <summary>

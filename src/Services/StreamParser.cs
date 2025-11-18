@@ -10,11 +10,28 @@ namespace CopilotCli.Services;
 public class StreamParser
 {
     /// <summary>
+    /// Parses SSE events from a stream.
+    /// </summary>
+    /// <param name="stream">The stream containing the SSE data.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>An async enumerable of SSE events.</returns>
+    public static async IAsyncEnumerable<SseItem<string>> ParseSseStreamAsync(
+        Stream stream,
+        [System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        await foreach (var sseEvent in SseParser.Create(stream).EnumerateAsync(cancellationToken))
+        {
+            yield return sseEvent;
+        }
+    }
+
+    /// <summary>
     /// Parses SSE events from an HTTP response stream.
     /// </summary>
     /// <param name="response">The HTTP response message containing the SSE stream.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>An async enumerable of SSE events.</returns>
+    [Obsolete("Use the overload that accepts Stream directly")]
     public static async IAsyncEnumerable<SseItem<string>> ParseSseStreamAsync(
         HttpResponseMessage response,
         [System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken cancellationToken = default)
