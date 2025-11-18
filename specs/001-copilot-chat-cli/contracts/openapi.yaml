@@ -1,0 +1,300 @@
+openapi: 3.1.0
+info:
+  title: Microsoft 365 Copilot Chat API
+  description: API for creating and continuing multi-turn conversations with Microsoft 365 Copilot
+  version: beta
+  contact:
+    name: Microsoft Graph API
+    url: https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/api/ai-services/chat/overview
+
+servers:
+  - url: https://graph.microsoft.com/beta
+    description: Microsoft Graph Beta Endpoint
+
+security:
+  - BearerAuth: []
+
+paths:
+  /copilot/conversations:
+    post:
+      summary: Create a new Copilot conversation
+      operationId: createConversation
+      description: Creates a new conversation session with Microsoft 365 Copilot. Returns a conversation ID used for subsequent chat messages.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Empty JSON body required by API
+      responses:
+        '201':
+          description: Conversation created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CopilotConversation'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /copilot/conversations/{conversationId}/chatOverStream:
+    post:
+      summary: Send a message and receive streaming response
+      operationId: chatOverStream
+      description: Sends a chat message to an existing conversation and receives a streaming Server-Sent Events response with Copilot's answer.
+      parameters:
+        - name: conversationId
+          in: path
+          required: true
+          description: The unique identifier of the conversation (GUID format)
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatRequest'
+      responses:
+        '200':
+          description: Streaming response started successfully
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                description: Server-Sent Events stream, each event contains a CopilotConversation object in JSON format
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: |
+        Bearer token authentication. Requires all of the following Microsoft Graph permissions:
+        Sites.Read.All, Mail.Read, People.Read.All, OnlineMeetingTranscript.Read.All,
+        Chat.Read, ChannelMessage.Read.All, ExternalItem.Read.All
+
+  schemas:
+    CopilotConversation:
+      type: object
+      description: Represents a conversation session with Microsoft 365 Copilot
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the conversation
+        createdDateTime:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when conversation was created
+        displayName:
+          type: string
+          description: Human-readable name for the conversation (empty initially, updated after first message)
+        status:
+          type: string
+          enum: [active, closed]
+          description: Current state of the conversation
+        turnCount:
+          type: integer
+          description: Number of message exchanges in the conversation
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/CopilotMessage'
+          description: Array of messages in the conversation (populated in streaming responses)
+      required:
+        - id
+        - createdDateTime
+        - status
+        - turnCount
+
+    CopilotMessage:
+      type: object
+      description: A message within a Copilot conversation (user or assistant)
+      properties:
+        '@odata.type':
+          type: string
+          description: OData type identifier
+          example: '#microsoft.graph.copilotConversationResponseMessage'
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the message
+        text:
+          type: string
+          description: Message content
+        createdDateTime:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when message was created
+        adaptiveCards:
+          type: array
+          items:
+            type: object
+          description: Optional UI rendering hints (Adaptive Cards format)
+        attributions:
+          type: array
+          items:
+            type: object
+          description: Optional source citations and references
+        sensitivityLabel:
+          type: object
+          description: Optional data classification metadata
+      required:
+        - id
+        - text
+        - createdDateTime
+
+    ChatRequest:
+      type: object
+      description: Request body for sending a chat message
+      properties:
+        message:
+          $ref: '#/components/schemas/MessageParameter'
+        locationHint:
+          $ref: '#/components/schemas/LocationHint'
+        additionalContext:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContextMessage'
+          description: Optional extra context for grounding
+        contextualResources:
+          $ref: '#/components/schemas/ContextualResources'
+      required:
+        - message
+        - locationHint
+
+    MessageParameter:
+      type: object
+      description: The chat message being sent
+      properties:
+        text:
+          type: string
+          description: Message content
+      required:
+        - text
+
+    LocationHint:
+      type: object
+      description: User location information for timezone-aware responses
+      properties:
+        timeZone:
+          type: string
+          description: IANA timezone identifier (e.g., America/New_York)
+      required:
+        - timeZone
+
+    ContextMessage:
+      type: object
+      description: Additional context text for grounding
+      properties:
+        text:
+          type: string
+          description: Context text snippet
+
+    ContextualResources:
+      type: object
+      description: OneDrive/SharePoint files and web search settings
+      properties:
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/FileReference'
+          description: OneDrive or SharePoint files to use as context
+        webContext:
+          $ref: '#/components/schemas/WebContext'
+
+    FileReference:
+      type: object
+      description: Reference to a OneDrive or SharePoint file
+      properties:
+        uri:
+          type: string
+          format: uri
+          description: Full URL to the SharePoint/OneDrive file
+
+    WebContext:
+      type: object
+      description: Web search grounding configuration
+      properties:
+        isWebEnabled:
+          type: boolean
+          description: Whether to enable web search grounding (default true)
+
+  responses:
+    BadRequest:
+      description: Invalid request format or parameters
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  message:
+                    type: string
+
+    Unauthorized:
+      description: Missing or invalid authentication token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: 'Unauthorized'
+                  message:
+                    type: string
+                    example: 'Authentication token is missing or invalid'
+
+    Forbidden:
+      description: Insufficient permissions for the requested operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: 'Forbidden'
+                  message:
+                    type: string
+                    example: 'Required permissions: Sites.Read.All, Mail.Read, People.Read.All, OnlineMeetingTranscript.Read.All, Chat.Read, ChannelMessage.Read.All, ExternalItem.Read.All'
+
+    NotFound:
+      description: Conversation not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: 'NotFound'
+                  message:
+                    type: string
+                    example: 'Conversation with specified ID does not exist'

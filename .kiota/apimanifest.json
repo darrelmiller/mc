@@ -1,0 +1,23 @@
+{
+  "applicationName": "application",
+  "apiDependencies": {
+    "CopilotApi": {
+      "apiDescriptionUrl": "./openapi.yaml",
+      "apiDeploymentBaseUrl": "https://graph.microsoft.com/beta/",
+      "requests": [
+        {
+          "method": "POST",
+          "uriTemplate": "copilot/conversations/{conversationId}/chatOverStream"
+        },
+        {
+          "method": "POST",
+          "uriTemplate": "copilot/conversations"
+        }
+      ],
+      "extensions": {
+        "x-ms-kiota-hash": "DD438B19AE42821CE2F8AC12D8BB6A87EF70F8C2D7B1E57EA8A6F61CB42F2CE7",
+        "x-ms-kiota-version": "1.29.0"
+      }
+    }
+  }
+}
