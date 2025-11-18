@@ -1,0 +1,10 @@
+{
+  "version": "1.0.0",
+  "language": "CSharp",
+  "inputUrl": "openapi.yaml",
+  "outputPath": "src/Generated/CopilotSdk",
+  "clientClassName": "CopilotApiClient",
+  "namespace": "CopilotCli.Generated",
+  "usesBackingStore": false,
+  "includeAdditionalData": true
+}

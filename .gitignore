@@ -1,0 +1,44 @@
+# .NET build outputs
+bin/
+obj/
+out/
+
+# Kiota generated code
+src/Generated/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio cache/options
+.vs/
+.vscode/
+
+# NuGet packages
+*.nupkg
+packages/
+
+# Test results
+TestResults/
+*.trx
+
+# Build artifacts
+*.exe
+*.dll
+*.pdb
+
+# Logs
+*.log
+
+# Environment variables
+.env
+.env.*
+
+# MSAL token cache
+.copilot-cli/
+
+# OS files
+.DS_Store
+Thumbs.db

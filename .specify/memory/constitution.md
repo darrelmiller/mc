@@ -3,10 +3,12 @@
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
+### Never write low-level HTTP calling code
 <!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+Always use Kiota generated SDKs for all HTTP interactions with Microsoft Graph and other services.
+It can be installed with instructions here https://learn.microsoft.com/en-ca/openapi/kiota/install?tabs=powershell#install-as-net-tool
+
+If you can't find an existing OpenAPI description for Kiota, then infer one from the documentation.
 
 ### [PRINCIPLE_2_NAME]
 <!-- Example: II. CLI Interface -->
