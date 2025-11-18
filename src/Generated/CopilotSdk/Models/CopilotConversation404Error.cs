@@ -10,7 +10,7 @@ namespace ApiSdk.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class CopilotMessage404Error : ApiException, IAdditionalDataHolder, IParsable
+    public partial class CopilotConversation404Error : ApiException, IAdditionalDataHolder, IParsable
     #pragma warning restore CS1591
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
@@ -18,29 +18,29 @@ namespace ApiSdk.Models
         /// <summary>The error property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public global::ApiSdk.Models.CopilotMessage404Error_error? Error { get; set; }
+        public global::ApiSdk.Models.CopilotConversation404Error_error? Error { get; set; }
 #nullable restore
 #else
-        public global::ApiSdk.Models.CopilotMessage404Error_error Error { get; set; }
+        public global::ApiSdk.Models.CopilotConversation404Error_error Error { get; set; }
 #endif
         /// <summary>The primary error message.</summary>
         public override string Message { get => base.Message; }
         /// <summary>
-        /// Instantiates a new <see cref="global::ApiSdk.Models.CopilotMessage404Error"/> and sets the default values.
+        /// Instantiates a new <see cref="global::ApiSdk.Models.CopilotConversation404Error"/> and sets the default values.
         /// </summary>
-        public CopilotMessage404Error()
+        public CopilotConversation404Error()
         {
             AdditionalData = new Dictionary<string, object>();
         }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
-        /// <returns>A <see cref="global::ApiSdk.Models.CopilotMessage404Error"/></returns>
+        /// <returns>A <see cref="global::ApiSdk.Models.CopilotConversation404Error"/></returns>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static global::ApiSdk.Models.CopilotMessage404Error CreateFromDiscriminatorValue(IParseNode parseNode)
+        public static global::ApiSdk.Models.CopilotConversation404Error CreateFromDiscriminatorValue(IParseNode parseNode)
         {
             if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
-            return new global::ApiSdk.Models.CopilotMessage404Error();
+            return new global::ApiSdk.Models.CopilotConversation404Error();
         }
         /// <summary>
         /// The deserialization information for the current model
@@ -50,7 +50,7 @@ namespace ApiSdk.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "error", n => { Error = n.GetObjectValue<global::ApiSdk.Models.CopilotMessage404Error_error>(global::ApiSdk.Models.CopilotMessage404Error_error.CreateFromDiscriminatorValue); } },
+                { "error", n => { Error = n.GetObjectValue<global::ApiSdk.Models.CopilotConversation404Error_error>(global::ApiSdk.Models.CopilotConversation404Error_error.CreateFromDiscriminatorValue); } },
             };
         }
         /// <summary>
@@ -60,7 +60,7 @@ namespace ApiSdk.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteObjectValue<global::ApiSdk.Models.CopilotMessage404Error_error>("error", Error);
+            writer.WriteObjectValue<global::ApiSdk.Models.CopilotConversation404Error_error>("error", Error);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

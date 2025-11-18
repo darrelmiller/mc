@@ -19,8 +19,8 @@ public interface ICopilotClient
     /// <param name="conversationId">The unique identifier of the conversation.</param>
     /// <param name="message">The message text to send.</param>
     /// <param name="timeZone">Optional timezone identifier for locationHint.</param>
-    /// <returns>A task that represents the asynchronous operation. The task result contains the Copilot message response.</returns>
-    Task<CopilotMessage?> SendMessageNonStreamingAsync(string conversationId, string message, string? timeZone = null);
+    /// <returns>A task that represents the asynchronous operation. The task result contains the updated conversation.</returns>
+    Task<CopilotConversation?> SendMessageNonStreamingAsync(string conversationId, string message, string? timeZone = null);
 
     /// <summary>
     /// Sends a message to an existing conversation and receives a streaming response.

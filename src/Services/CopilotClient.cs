@@ -68,7 +68,7 @@ public class CopilotClient : ICopilotClient
     /// <summary>
     /// Sends a message to an existing conversation and receives a non-streaming response.
     /// </summary>
-    public async Task<CopilotMessage?> SendMessageNonStreamingAsync(string conversationId, string message, string? timeZone = null)
+    public async Task<CopilotConversation?> SendMessageNonStreamingAsync(string conversationId, string message, string? timeZone = null)
     {
         var chatRequest = new ChatRequest
         {
@@ -99,7 +99,7 @@ public class CopilotClient : ICopilotClient
                 "Sites.Read.All, Mail.Read, People.Read.All, OnlineMeetingTranscript.Read.All, " +
                 "Chat.Read, ChannelMessage.Read.All, ExternalItem.Read.All", ex);
         }
-        catch (ApiSdk.Models.CopilotMessage500Error ex)
+        catch (ApiSdk.Models.CopilotConversation500Error ex)
         {
             throw new InvalidOperationException($"Server error: {ex.Error?.Message ?? "An internal server error occurred"}", ex);
         }

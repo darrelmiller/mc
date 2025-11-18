@@ -36,35 +36,35 @@ namespace ApiSdk.Copilot.Conversations.Item.Chat
         /// <summary>
         /// Sends a chat message to an existing conversation and receives a complete response with Copilot&apos;s answer.
         /// </summary>
-        /// <returns>A <see cref="global::ApiSdk.Models.CopilotMessage"/></returns>
+        /// <returns>A <see cref="global::ApiSdk.Models.CopilotConversation"/></returns>
         /// <param name="body">Request body for sending a chat message</param>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
-        /// <exception cref="global::ApiSdk.Models.CopilotMessage400Error">When receiving a 400 status code</exception>
-        /// <exception cref="global::ApiSdk.Models.CopilotMessage401Error">When receiving a 401 status code</exception>
-        /// <exception cref="global::ApiSdk.Models.CopilotMessage403Error">When receiving a 403 status code</exception>
-        /// <exception cref="global::ApiSdk.Models.CopilotMessage404Error">When receiving a 404 status code</exception>
-        /// <exception cref="global::ApiSdk.Models.CopilotMessage500Error">When receiving a 500 status code</exception>
+        /// <exception cref="global::ApiSdk.Models.CopilotConversation400Error">When receiving a 400 status code</exception>
+        /// <exception cref="global::ApiSdk.Models.CopilotConversation401Error">When receiving a 401 status code</exception>
+        /// <exception cref="global::ApiSdk.Models.CopilotConversation403Error">When receiving a 403 status code</exception>
+        /// <exception cref="global::ApiSdk.Models.CopilotConversation404Error">When receiving a 404 status code</exception>
+        /// <exception cref="global::ApiSdk.Models.CopilotConversation500Error">When receiving a 500 status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<global::ApiSdk.Models.CopilotMessage?> PostAsync(global::ApiSdk.Models.ChatRequest body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::ApiSdk.Models.CopilotConversation?> PostAsync(global::ApiSdk.Models.ChatRequest body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #nullable restore
 #else
-        public async Task<global::ApiSdk.Models.CopilotMessage> PostAsync(global::ApiSdk.Models.ChatRequest body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::ApiSdk.Models.CopilotConversation> PostAsync(global::ApiSdk.Models.ChatRequest body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #endif
             if(ReferenceEquals(body, null)) throw new ArgumentNullException(nameof(body));
             var requestInfo = ToPostRequestInformation(body, requestConfiguration);
             var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
             {
-                { "400", global::ApiSdk.Models.CopilotMessage400Error.CreateFromDiscriminatorValue },
-                { "401", global::ApiSdk.Models.CopilotMessage401Error.CreateFromDiscriminatorValue },
-                { "403", global::ApiSdk.Models.CopilotMessage403Error.CreateFromDiscriminatorValue },
-                { "404", global::ApiSdk.Models.CopilotMessage404Error.CreateFromDiscriminatorValue },
-                { "500", global::ApiSdk.Models.CopilotMessage500Error.CreateFromDiscriminatorValue },
+                { "400", global::ApiSdk.Models.CopilotConversation400Error.CreateFromDiscriminatorValue },
+                { "401", global::ApiSdk.Models.CopilotConversation401Error.CreateFromDiscriminatorValue },
+                { "403", global::ApiSdk.Models.CopilotConversation403Error.CreateFromDiscriminatorValue },
+                { "404", global::ApiSdk.Models.CopilotConversation404Error.CreateFromDiscriminatorValue },
+                { "500", global::ApiSdk.Models.CopilotConversation500Error.CreateFromDiscriminatorValue },
             };
-            return await RequestAdapter.SendAsync<global::ApiSdk.Models.CopilotMessage>(requestInfo, global::ApiSdk.Models.CopilotMessage.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
+            return await RequestAdapter.SendAsync<global::ApiSdk.Models.CopilotConversation>(requestInfo, global::ApiSdk.Models.CopilotConversation.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
         }
         /// <summary>
         /// Sends a chat message to an existing conversation and receives a complete response with Copilot&apos;s answer.

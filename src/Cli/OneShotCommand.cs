@@ -42,11 +42,16 @@ public class OneShotCommand
             }
 
             // Send message and get non-streaming response
-            var message = await _copilotClient.SendMessageNonStreamingAsync(conversation.Id.ToString()!, query);
+            var updatedConversation = await _copilotClient.SendMessageNonStreamingAsync(conversation.Id.ToString()!, query);
             
-            if (message?.Text != null)
+            // Get the latest message from the conversation
+            if (updatedConversation?.Messages != null && updatedConversation.Messages.Count > 0)
             {
-                Console.WriteLine(message.Text);
+                var latestMessage = updatedConversation.Messages[updatedConversation.Messages.Count - 1];
+                if (latestMessage?.Text != null)
+                {
+                    Console.WriteLine(latestMessage.Text);
+                }
             }
 
             return ErrorHandler.Success;

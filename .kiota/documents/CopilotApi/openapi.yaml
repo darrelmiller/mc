@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.1.0
 info:
   title: Microsoft 365 Copilot Chat API
   description: API for creating and continuing multi-turn conversations with Microsoft 365 Copilot
@@ -66,7 +66,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CopilotMessage'
+                $ref: '#/components/schemas/CopilotConversation'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
