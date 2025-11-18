@@ -41,20 +41,12 @@ public class OneShotCommand
                 return ErrorHandler.ConversationError;
             }
 
-            // Send message and get streaming response
-            var response = await _copilotClient.SendMessageAsync(conversation.Id.ToString()!, query);
-
-            // Parse and display SSE stream
-            await foreach (var sseEvent in StreamParser.ParseSseStreamAsync(response))
+            // Send message and get non-streaming response
+            var message = await _copilotClient.SendMessageNonStreamingAsync(conversation.Id.ToString()!, query);
+            
+            if (message?.Text != null)
             {
-                if (!string.IsNullOrEmpty(sseEvent.Data))
-                {
-                    var messageText = StreamParser.ExtractMessageText(sseEvent.Data);
-                    if (!string.IsNullOrEmpty(messageText))
-                    {
-                        Console.WriteLine(messageText);
-                    }
-                }
+                Console.WriteLine(message.Text);
             }
 
             return ErrorHandler.Success;

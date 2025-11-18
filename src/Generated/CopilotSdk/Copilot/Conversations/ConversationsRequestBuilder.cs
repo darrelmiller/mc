@@ -68,6 +68,7 @@ namespace ApiSdk.Copilot.Conversations
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
         /// <exception cref="global::ApiSdk.Models.CopilotConversation401Error">When receiving a 401 status code</exception>
         /// <exception cref="global::ApiSdk.Models.CopilotConversation403Error">When receiving a 403 status code</exception>
+        /// <exception cref="global::ApiSdk.Models.CopilotConversation500Error">When receiving a 500 status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public async Task<global::ApiSdk.Models.CopilotConversation?> PostAsync(global::ApiSdk.Copilot.Conversations.ConversationsPostRequestBody body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
@@ -83,6 +84,7 @@ namespace ApiSdk.Copilot.Conversations
             {
                 { "401", global::ApiSdk.Models.CopilotConversation401Error.CreateFromDiscriminatorValue },
                 { "403", global::ApiSdk.Models.CopilotConversation403Error.CreateFromDiscriminatorValue },
+                { "500", global::ApiSdk.Models.CopilotConversation500Error.CreateFromDiscriminatorValue },
             };
             return await RequestAdapter.SendAsync<global::ApiSdk.Models.CopilotConversation>(requestInfo, global::ApiSdk.Models.CopilotConversation.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
         }

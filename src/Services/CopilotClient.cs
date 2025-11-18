@@ -4,6 +4,7 @@ using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Kiota.Http.HttpClientLibrary;
 using Microsoft.Kiota.Serialization;
+using Microsoft.Kiota.Serialization.Json;
 using System.Text;
 using System.Text.Json;
 
@@ -29,6 +30,10 @@ public class CopilotClient : ICopilotClient
         // Create HTTP client library request adapter
         var requestAdapter = new HttpClientRequestAdapter(authenticationProvider);
         
+        // Register JSON serialization factory
+        ApiClientBuilder.RegisterDefaultSerializer<JsonSerializationWriterFactory>();
+        ApiClientBuilder.RegisterDefaultDeserializer<JsonParseNodeFactory>();
+        
         // Initialize Kiota client
         _client = new CopilotApi(requestAdapter);
     }
@@ -53,6 +58,50 @@ public class CopilotClient : ICopilotClient
                 "Forbidden: Insufficient permissions. Required permissions: " +
                 "Sites.Read.All, Mail.Read, People.Read.All, OnlineMeetingTranscript.Read.All, " +
                 "Chat.Read, ChannelMessage.Read.All, ExternalItem.Read.All", ex);
+        }
+        catch (ApiSdk.Models.CopilotConversation500Error ex)
+        {
+            throw new InvalidOperationException($"Server error: {ex.Error?.Message ?? "An internal server error occurred"}", ex);
+        }
+    }
+
+    /// <summary>
+    /// Sends a message to an existing conversation and receives a non-streaming response.
+    /// </summary>
+    public async Task<CopilotMessage?> SendMessageNonStreamingAsync(string conversationId, string message, string? timeZone = null)
+    {
+        var chatRequest = new ChatRequest
+        {
+            Message = new MessageParameter
+            {
+                Text = message
+            },
+            LocationHint = new LocationHint
+            {
+                TimeZone = timeZone ?? ConvertToIanaTimeZone(TimeZoneInfo.Local.Id)
+            }
+        };
+
+        try
+        {
+            var conversationGuid = Guid.Parse(conversationId);
+            var response = await _client.Copilot.Conversations[conversationGuid].Chat.PostAsync(chatRequest);
+            return response;
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            throw new InvalidOperationException("Authentication failed: Token is invalid or expired", ex);
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Forbidden)
+        {
+            throw new InvalidOperationException(
+                "Forbidden: Insufficient permissions. Required permissions: " +
+                "Sites.Read.All, Mail.Read, People.Read.All, OnlineMeetingTranscript.Read.All, " +
+                "Chat.Read, ChannelMessage.Read.All, ExternalItem.Read.All", ex);
+        }
+        catch (ApiSdk.Models.CopilotMessage500Error ex)
+        {
+            throw new InvalidOperationException($"Server error: {ex.Error?.Message ?? "An internal server error occurred"}", ex);
         }
     }
 

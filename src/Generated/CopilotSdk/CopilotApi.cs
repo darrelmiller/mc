@@ -3,10 +3,6 @@
 using ApiSdk.Copilot;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions;
-using Microsoft.Kiota.Serialization.Form;
-using Microsoft.Kiota.Serialization.Json;
-using Microsoft.Kiota.Serialization.Multipart;
-using Microsoft.Kiota.Serialization.Text;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -30,13 +26,6 @@ namespace ApiSdk
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
         public CopilotApi(IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}", new Dictionary<string, object>())
         {
-            ApiClientBuilder.RegisterDefaultSerializer<JsonSerializationWriterFactory>();
-            ApiClientBuilder.RegisterDefaultSerializer<TextSerializationWriterFactory>();
-            ApiClientBuilder.RegisterDefaultSerializer<FormSerializationWriterFactory>();
-            ApiClientBuilder.RegisterDefaultSerializer<MultipartSerializationWriterFactory>();
-            ApiClientBuilder.RegisterDefaultDeserializer<JsonParseNodeFactory>();
-            ApiClientBuilder.RegisterDefaultDeserializer<TextParseNodeFactory>();
-            ApiClientBuilder.RegisterDefaultDeserializer<FormParseNodeFactory>();
             if (string.IsNullOrEmpty(RequestAdapter.BaseUrl))
             {
                 RequestAdapter.BaseUrl = "https://graph.microsoft.com/beta";

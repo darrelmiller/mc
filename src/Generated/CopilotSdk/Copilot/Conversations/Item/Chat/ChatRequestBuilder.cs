@@ -9,65 +9,65 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
 using System;
-namespace ApiSdk.Copilot.Conversations.Item.ChatOverStream
+namespace ApiSdk.Copilot.Conversations.Item.Chat
 {
     /// <summary>
-    /// Builds and executes requests for operations under \copilot\conversations\{conversationId}\chatOverStream
+    /// Builds and executes requests for operations under \copilot\conversations\{conversationId}\chat
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class ChatOverStreamRequestBuilder : BaseRequestBuilder
+    public partial class ChatRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
-        /// Instantiates a new <see cref="global::ApiSdk.Copilot.Conversations.Item.ChatOverStream.ChatOverStreamRequestBuilder"/> and sets the default values.
+        /// Instantiates a new <see cref="global::ApiSdk.Copilot.Conversations.Item.Chat.ChatRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public ChatOverStreamRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/copilot/conversations/{conversationId}/chatOverStream", pathParameters)
+        public ChatRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/copilot/conversations/{conversationId}/chat", pathParameters)
         {
         }
         /// <summary>
-        /// Instantiates a new <see cref="global::ApiSdk.Copilot.Conversations.Item.ChatOverStream.ChatOverStreamRequestBuilder"/> and sets the default values.
+        /// Instantiates a new <see cref="global::ApiSdk.Copilot.Conversations.Item.Chat.ChatRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public ChatOverStreamRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/copilot/conversations/{conversationId}/chatOverStream", rawUrl)
+        public ChatRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/copilot/conversations/{conversationId}/chat", rawUrl)
         {
         }
         /// <summary>
-        /// Sends a chat message to an existing conversation and receives a streaming Server-Sent Events response with Copilot&apos;s answer.
+        /// Sends a chat message to an existing conversation and receives a complete response with Copilot&apos;s answer.
         /// </summary>
-        /// <returns>A <see cref="Stream"/></returns>
+        /// <returns>A <see cref="global::ApiSdk.Models.CopilotMessage"/></returns>
         /// <param name="body">Request body for sending a chat message</param>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
-        /// <exception cref="global::ApiSdk.Models.ChatOverStream400Error">When receiving a 400 status code</exception>
-        /// <exception cref="global::ApiSdk.Models.ChatOverStream401Error">When receiving a 401 status code</exception>
-        /// <exception cref="global::ApiSdk.Models.ChatOverStream403Error">When receiving a 403 status code</exception>
-        /// <exception cref="global::ApiSdk.Models.ChatOverStream404Error">When receiving a 404 status code</exception>
-        /// <exception cref="global::ApiSdk.Models.ChatOverStream500Error">When receiving a 500 status code</exception>
+        /// <exception cref="global::ApiSdk.Models.CopilotMessage400Error">When receiving a 400 status code</exception>
+        /// <exception cref="global::ApiSdk.Models.CopilotMessage401Error">When receiving a 401 status code</exception>
+        /// <exception cref="global::ApiSdk.Models.CopilotMessage403Error">When receiving a 403 status code</exception>
+        /// <exception cref="global::ApiSdk.Models.CopilotMessage404Error">When receiving a 404 status code</exception>
+        /// <exception cref="global::ApiSdk.Models.CopilotMessage500Error">When receiving a 500 status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<Stream?> PostAsync(global::ApiSdk.Models.ChatRequest body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::ApiSdk.Models.CopilotMessage?> PostAsync(global::ApiSdk.Models.ChatRequest body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #nullable restore
 #else
-        public async Task<Stream> PostAsync(global::ApiSdk.Models.ChatRequest body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::ApiSdk.Models.CopilotMessage> PostAsync(global::ApiSdk.Models.ChatRequest body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #endif
             if(ReferenceEquals(body, null)) throw new ArgumentNullException(nameof(body));
             var requestInfo = ToPostRequestInformation(body, requestConfiguration);
             var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
             {
-                { "400", global::ApiSdk.Models.ChatOverStream400Error.CreateFromDiscriminatorValue },
-                { "401", global::ApiSdk.Models.ChatOverStream401Error.CreateFromDiscriminatorValue },
-                { "403", global::ApiSdk.Models.ChatOverStream403Error.CreateFromDiscriminatorValue },
-                { "404", global::ApiSdk.Models.ChatOverStream404Error.CreateFromDiscriminatorValue },
-                { "500", global::ApiSdk.Models.ChatOverStream500Error.CreateFromDiscriminatorValue },
+                { "400", global::ApiSdk.Models.CopilotMessage400Error.CreateFromDiscriminatorValue },
+                { "401", global::ApiSdk.Models.CopilotMessage401Error.CreateFromDiscriminatorValue },
+                { "403", global::ApiSdk.Models.CopilotMessage403Error.CreateFromDiscriminatorValue },
+                { "404", global::ApiSdk.Models.CopilotMessage404Error.CreateFromDiscriminatorValue },
+                { "500", global::ApiSdk.Models.CopilotMessage500Error.CreateFromDiscriminatorValue },
             };
-            return await RequestAdapter.SendPrimitiveAsync<Stream>(requestInfo, errorMapping, cancellationToken).ConfigureAwait(false);
+            return await RequestAdapter.SendAsync<global::ApiSdk.Models.CopilotMessage>(requestInfo, global::ApiSdk.Models.CopilotMessage.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
         }
         /// <summary>
-        /// Sends a chat message to an existing conversation and receives a streaming Server-Sent Events response with Copilot&apos;s answer.
+        /// Sends a chat message to an existing conversation and receives a complete response with Copilot&apos;s answer.
         /// </summary>
         /// <returns>A <see cref="RequestInformation"/></returns>
         /// <param name="body">Request body for sending a chat message</param>
@@ -84,25 +84,25 @@ namespace ApiSdk.Copilot.Conversations.Item.ChatOverStream
             if(ReferenceEquals(body, null)) throw new ArgumentNullException(nameof(body));
             var requestInfo = new RequestInformation(Method.POST, UrlTemplate, PathParameters);
             requestInfo.Configure(requestConfiguration);
-            requestInfo.Headers.TryAdd("Accept", "text/event-stream, application/json");
+            requestInfo.Headers.TryAdd("Accept", "application/json");
             requestInfo.SetContentFromParsable(RequestAdapter, "application/json", body);
             return requestInfo;
         }
         /// <summary>
         /// Returns a request builder with the provided arbitrary URL. Using this method means any other path or query parameters are ignored.
         /// </summary>
-        /// <returns>A <see cref="global::ApiSdk.Copilot.Conversations.Item.ChatOverStream.ChatOverStreamRequestBuilder"/></returns>
+        /// <returns>A <see cref="global::ApiSdk.Copilot.Conversations.Item.Chat.ChatRequestBuilder"/></returns>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
-        public global::ApiSdk.Copilot.Conversations.Item.ChatOverStream.ChatOverStreamRequestBuilder WithUrl(string rawUrl)
+        public global::ApiSdk.Copilot.Conversations.Item.Chat.ChatRequestBuilder WithUrl(string rawUrl)
         {
-            return new global::ApiSdk.Copilot.Conversations.Item.ChatOverStream.ChatOverStreamRequestBuilder(rawUrl, RequestAdapter);
+            return new global::ApiSdk.Copilot.Conversations.Item.Chat.ChatRequestBuilder(rawUrl, RequestAdapter);
         }
         /// <summary>
         /// Configuration for the request such as headers, query parameters, and middleware options.
         /// </summary>
         [Obsolete("This class is deprecated. Please use the generic RequestConfiguration class generated by the generator.")]
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class ChatOverStreamRequestBuilderPostRequestConfiguration : RequestConfiguration<DefaultQueryParameters>
+        public partial class ChatRequestBuilderPostRequestConfiguration : RequestConfiguration<DefaultQueryParameters>
         {
         }
     }

@@ -38,6 +38,45 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /copilot/conversations/{conversationId}/chat:
+    post:
+      summary: Send a message and receive non-streaming response
+      operationId: chat
+      description: Sends a chat message to an existing conversation and receives a complete response with Copilot's answer.
+      parameters:
+        - name: conversationId
+          in: path
+          required: true
+          description: The unique identifier of the conversation (GUID format)
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatRequest'
+      responses:
+        '200':
+          description: Response received successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CopilotMessage'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /copilot/conversations/{conversationId}/chatOverStream:
     post:
@@ -74,6 +113,8 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
 components:
   securitySchemes:
@@ -298,3 +339,20 @@ components:
                   message:
                     type: string
                     example: 'Conversation with specified ID does not exist'
+
+    InternalServerError:
+      description: Internal server error occurred
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: 'InternalServerError'
+                  message:
+                    type: string
+                    example: 'An internal server error occurred while processing the request'
