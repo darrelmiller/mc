@@ -20,8 +20,9 @@ public class OneShotCommand
     /// Executes a one-shot query and streams the response to stdout.
     /// </summary>
     /// <param name="query">The query text to send.</param>
+    /// <param name="useStreaming">Whether to use streaming endpoint.</param>
     /// <returns>Exit code (0 for success, non-zero for errors).</returns>
-    public async Task<int> ExecuteAsync(string query)
+    public async Task<int> ExecuteAsync(string query, bool useStreaming = false)
     {
         try
         {
@@ -41,16 +42,37 @@ public class OneShotCommand
                 return ErrorHandler.ConversationError;
             }
 
-            // Send message and get non-streaming response
-            var updatedConversation = await _copilotClient.SendMessageNonStreamingAsync(conversation.Id.ToString()!, query);
-            
-            // Get the latest message from the conversation
-            if (updatedConversation?.Messages != null && updatedConversation.Messages.Count > 0)
+            if (useStreaming)
             {
-                var latestMessage = updatedConversation.Messages[updatedConversation.Messages.Count - 1];
-                if (latestMessage?.Text != null)
+                // Send message and get streaming response
+                var response = await _copilotClient.SendMessageAsync(conversation.Id.ToString()!, query);
+
+                // Parse and display SSE stream
+                await foreach (var sseEvent in StreamParser.ParseSseStreamAsync(response))
                 {
-                    Console.WriteLine(latestMessage.Text);
+                    if (!string.IsNullOrEmpty(sseEvent.Data))
+                    {
+                        var messageText = StreamParser.ExtractMessageText(sseEvent.Data);
+                        if (!string.IsNullOrEmpty(messageText))
+                        {
+                            Console.WriteLine(messageText);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // Send message and get non-streaming response
+                var updatedConversation = await _copilotClient.SendMessageNonStreamingAsync(conversation.Id.ToString()!, query);
+                
+                // Get the latest message from the conversation
+                if (updatedConversation?.Messages != null && updatedConversation.Messages.Count > 0)
+                {
+                    var latestMessage = updatedConversation.Messages[updatedConversation.Messages.Count - 1];
+                    if (latestMessage?.Text != null)
+                    {
+                        Console.WriteLine(latestMessage.Text);
+                    }
                 }
             }
 

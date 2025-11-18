@@ -33,11 +33,26 @@ class Program
                         return ErrorHandler.Success;
 
                     default:
-                        // Treat everything else as a one-shot query
-                        var query = string.Join(" ", args);
+                        // Check for --stream or -s flag
+                        bool useStreaming = false;
+                        var queryArgs = new List<string>();
+                        
+                        foreach (var arg in args)
+                        {
+                            if (arg == "--stream" || arg == "-s")
+                            {
+                                useStreaming = true;
+                            }
+                            else
+                            {
+                                queryArgs.Add(arg);
+                            }
+                        }
+                        
+                        var query = string.Join(" ", queryArgs);
                         var copilotClient = new CopilotClient(authProvider);
                         var oneShotCommand = new OneShotCommand(authProvider, copilotClient);
-                        return await oneShotCommand.ExecuteAsync(query);
+                        return await oneShotCommand.ExecuteAsync(query, useStreaming);
                 }
             }
             else
@@ -65,9 +80,12 @@ class Program
         Console.WriteLine("USAGE:");
         Console.WriteLine("  copilot-cli login                  Sign in with Microsoft Entra");
         Console.WriteLine("  copilot-cli logout                 Sign out and clear cached tokens");
-        Console.WriteLine("  copilot-cli \"<query>\"               Send a one-shot query");
+        Console.WriteLine("  copilot-cli [--stream|-s] \"<query>\" Send a one-shot query");
         Console.WriteLine("  copilot-cli                        Start interactive mode (coming soon)");
         Console.WriteLine("  copilot-cli help                   Display this help message");
+        Console.WriteLine();
+        Console.WriteLine("OPTIONS:");
+        Console.WriteLine("  --stream, -s                       Use streaming endpoint for response");
         Console.WriteLine();
         Console.WriteLine("AUTHENTICATION:");
         Console.WriteLine("  Before using the CLI, you must authenticate:");
@@ -78,7 +96,8 @@ class Program
         Console.WriteLine("EXAMPLES:");
         Console.WriteLine("  copilot-cli login");
         Console.WriteLine("  copilot-cli \"What meetings do I have today?\"");
-        Console.WriteLine("  copilot-cli \"Summarize my recent emails from John\"");
+        Console.WriteLine("  copilot-cli --stream \"Summarize my recent emails from John\"");
+        Console.WriteLine("  copilot-cli -s \"What's on my calendar?\"");
         Console.WriteLine("  copilot-cli logout");
         Console.WriteLine();
         Console.WriteLine("EXIT CODES:");
