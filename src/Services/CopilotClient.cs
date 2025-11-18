@@ -16,22 +16,20 @@ namespace CopilotCli.Services;
 public class CopilotClient : ICopilotClient
 {
     private readonly CopilotApi _client;
-    private readonly IAuthProvider _authProvider;
 
     public CopilotClient(IAuthProvider authProvider)
     {
-        _authProvider = authProvider;
-        
+
         // Create authentication provider for Kiota
         var authenticationProvider = new BaseBearerTokenAuthenticationProvider(new TokenProvider(authProvider));
-        
+
         // Create HTTP client library request adapter
         var requestAdapter = new HttpClientRequestAdapter(authenticationProvider);
-        
+
         // Register JSON serialization factory
         ApiClientBuilder.RegisterDefaultSerializer<JsonSerializationWriterFactory>();
         ApiClientBuilder.RegisterDefaultDeserializer<JsonParseNodeFactory>();
-        
+
         // Initialize Kiota client
         _client = new CopilotApi(requestAdapter);
     }
